@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import coil.compose.rememberImagePainter
 import com.example.foodpanda.R
-import com.example.foodpanda.Screens.Categoryviewmodel
+import com.example.foodpanda.Viewmoels.Categoryviewmodel
 import com.example.foodpanda.data.Countrydata
 import com.example.foodpanda.data.x
 import com.example.foodpanda.model.categories.Category
@@ -166,7 +166,7 @@ Surface(modifier = Modifier
                 }
 Row(modifier = Modifier.fillMaxWidth()) {
     Surface(modifier = Modifier
-        .size(150.dp)
+        .size(180.dp)
         .weight(1f)
         .padding(10.dp)
     , color = Color.White
@@ -191,7 +191,7 @@ Image(painter = painterResource(id = R.drawable.gift), contentDescription = "",
     }
 
     Surface(modifier = Modifier
-        .size(150.dp)
+        .size(180.dp)
         .weight(1f)
         .padding(10.dp)
         , color = Color.White
@@ -217,7 +217,7 @@ Image(painter = painterResource(id = R.drawable.gift), contentDescription = "",
     }
 
     Surface(modifier = Modifier
-        .size(150.dp)
+        .size(180.dp)
         .weight(1f)
         .padding(10.dp)
         , color = Color.White

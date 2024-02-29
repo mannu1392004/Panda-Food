@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,26 +23,32 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.foodpanda.R
+import com.example.foodpanda.Screens.Detail_Screen.DetailScreen
 import com.example.foodpanda.Screens.Dine_screen.DineScreen
-import com.example.foodpanda.Screens.Settings.screens
-import com.example.foodpanda.Screens.Categoryviewmodel
+import com.example.foodpanda.Navigation.Navigation_Screen_Data.screens
+import com.example.foodpanda.Viewmoels.Categoryviewmodel
 import com.example.foodpanda.Screens.category_Screen.Categories
-import com.example.foodpanda.Screens.dinescreenviewmodel
+import com.example.foodpanda.Viewmoels.Detailscreenviewmodel
+import com.example.foodpanda.Viewmoels.Dinescreenviewmodel
 
 @Composable
-fun nav(){
-val categoryviewmodel = viewModel<Categoryviewmodel>()
-    val dinescreenviewmodel  = viewModel<dinescreenviewmodel>()
-    val nav = rememberNavController()
+fun nav(
+    detail: NavHostController,
+    nav: NavHostController,
+    categoryviewmodel: Categoryviewmodel,
+    dinescreenviewmodel: Dinescreenviewmodel,
+    detailscreenviewmodel: Detailscreenviewmodel
+) {
+
 
 val selection = remember {
     mutableStateOf(0)
 }
+
     Scaffold(
         bottomBar = {
 NavigationBar(modifier = Modifier
@@ -106,20 +111,18 @@ NavigationBar(modifier = Modifier
 
             paddingValues ->
 
-        NavHost(navController =nav , startDestination = screens.Dine.name, modifier = Modifier.padding(paddingValues) ){
+        NavHost(navController =nav , startDestination = screens.Cart.name, modifier = Modifier.padding(paddingValues) ){
 
             composable(screens.Categories.name){
                 Categories(viemodel = categoryviewmodel)
                 selection.value=0
             }
 composable(screens.Dine.name){
-   selection.value = 1
-DineScreen(dinescreenviewmodel,categoryviewmodel)
-
-
+DineScreen(viewmodel = dinescreenviewmodel, detail)
+    selection.value = 1
 }
 composable(screens.Cart.name){
-    Text(text = "Cart")
+
     selection.value  = 2
 }
         }

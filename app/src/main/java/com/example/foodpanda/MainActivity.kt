@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.example.foodpanda.Navigation.Navigation_Screen_Data.mainnav
 import com.example.foodpanda.Screens.mainscreen.nav
 
 import com.example.foodpanda.ui.theme.FoodPandaTheme
@@ -28,7 +29,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-nav()
+mainnav()
                 }
             }
         }

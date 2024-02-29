@@ -1,9 +1,13 @@
 package com.example.foodpanda.Screens.Dine_screen
 
+import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,9 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,16 +30,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.lifecycle.ViewModel
+import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
-import com.example.foodpanda.Screens.Categoryviewmodel
-import com.example.foodpanda.Screens.dinescreenviewmodel
+import com.example.foodpanda.Navigation.Navigation_Screen_Data.screens
+import com.example.foodpanda.Viewmoels.Dinescreenviewmodel
 import com.example.foodpanda.components.textchange
 import com.example.foodpanda.model.by_first_letter.Meal
 
-
 @Composable
-fun DineScreen(viewmodel:dinescreenviewmodel,viewmodel1:Categoryviewmodel) {
+fun DineScreen(viewmodel: Dinescreenviewmodel, detail: NavHostController) {
+
+
+
+
+
     val textList = listOf("Pork", "Chicken", "Veg")
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(10.dp), verticalArrangement = Arrangement.Top) {
@@ -46,7 +51,9 @@ fun DineScreen(viewmodel:dinescreenviewmodel,viewmodel1:Categoryviewmodel) {
 
             val x =viewmodel.listStateFlow.collectAsState()
 
-            LazyColumnContent(viewmodel, x.value.flatten())
+
+
+            LazyColumnContent( x.value.flatten(),detail)
         }
     }
 }
@@ -83,12 +90,12 @@ fun SearchBar(textList: List<String>) {
 }
 
 @Composable
-fun LazyColumnContent(viewModel: ViewModel, data: List<Meal>?, ) {
+fun LazyColumnContent( data: List<Meal>?, detail: NavHostController, ) {
     if (data != null) {
         LazyColumn(state = rememberLazyListState(),
             modifier = Modifier.padding(top = 5.dp)) {
             items(data) { meal ->
-                ReproducingList(meal = meal)
+                ReproducingList(meal = meal,detail)
             }
         }
     }
@@ -96,13 +103,24 @@ fun LazyColumnContent(viewModel: ViewModel, data: List<Meal>?, ) {
 
 
 @Composable
-fun ReproducingList(meal: Meal) {
+fun ReproducingList(meal: Meal, detail: NavHostController) {
+    val id = meal.idMeal
     Surface(
-        modifier = Modifier.padding(10.dp),
+        modifier = Modifier.padding(10.dp)
+
+            .clickable {
+                Log.d("idddddddddddddddddddd",id)
+                detail.navigate(screens.Detailscreen.name+"/$id" ) },
         shadowElevation = 20.dp,
         shape = RoundedCornerShape(20.dp)
+
     ) {
+        
+        
+        
         Column {
+
+
             Image(
                 painter = rememberImagePainter(data = meal.strMealThumb),
                 contentDescription = "",
@@ -113,26 +131,65 @@ fun ReproducingList(meal: Meal) {
             )
             Surface(
                 modifier = Modifier
+                    .height(100.dp)
                     .fillMaxWidth()
-                    .height(80.dp),
+                    ,
                 shape = RoundedCornerShape(20.dp)
             ) {
-                Column(modifier = Modifier.padding(10.dp)) {
-                    Text(
-                        text = meal.strMeal,
-                        fontSize = 3.5.em
-                    )
-                    Text(
-                        text = meal.strArea,
-                        fontSize = 2.5.em,
-                        fontWeight = FontWeight.Light
-                    )
-                    Text(
-                        text = "Ingredients -",
-                        fontSize = 2.5.em,
-                        fontWeight = FontWeight.Light
-                    )
-                }
+
+Row(modifier = Modifier,
+    horizontalArrangement = Arrangement.Center,
+    verticalAlignment = Alignment.CenterVertically) {
+
+
+
+
+    Column(modifier = Modifier
+        .weight(0.5f)
+        .fillMaxHeight(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+
+
+        Spacer(modifier =Modifier.weight(0.3f))
+
+        Surface(color = Color.Red, modifier = Modifier.weight(0.3f)) {
+
+
+            Text(
+                text = "Add to cart", color = Color.White, modifier = Modifier.padding(5.dp)
+            )
+
+        }
+Spacer(modifier = Modifier.weight(0.1f))
+
+        Text(text = "₹ 100", modifier = Modifier.weight(0.4f))
+
+    }
+
+
+    Column(modifier = Modifier
+        .padding(10.dp)
+        .weight(0.7f)) {
+        Text(
+            text = if (meal.strMeal.length<=20) meal.strMeal else
+                meal.strMeal.substring(0,20)+"..",
+            fontSize = 3.5.em
+        )
+        Text(
+            text = meal.strArea,
+            fontSize = 2.5.em,
+            fontWeight = FontWeight.Light
+        )
+        Text(
+            text =  if (meal.strIngredient1.length+meal.strIngredient2.length<=20)"Ingredients - ${meal.strIngredient1} , ${meal.strIngredient2}"
+             else "Ingridents - ${meal.strIngredient1}...",
+
+            fontSize = 2.5.em,
+            fontWeight = FontWeight.Light
+        )
+    }
+    
+    
+}
             }
         }
     }
