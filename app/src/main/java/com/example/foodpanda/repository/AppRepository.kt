@@ -2,10 +2,13 @@ package com.example.foodpanda.repository
 
 import android.util.Log
 import com.example.foodpanda.data.DataOrException
+
 import com.example.foodpanda.model.Detailmeal.mealdetail
 import com.example.foodpanda.model.by_first_letter.Meal
 import com.example.foodpanda.model.categories.Category
+import com.example.foodpanda.model.categorydetail.categorydetail
 import com.example.foodpanda.network.Category_Api
+import com.example.foodpanda.network.List_by_continents
 import com.example.foodpanda.network.Meal_by_Id_api
 import com.example.foodpanda.network.list_api
 import com.example.foodpanda.network.list_by_category
@@ -15,7 +18,8 @@ import kotlin.math.log
 class AppRepository @Inject constructor(private val categoryApi: Category_Api,
                                         private val listApi: list_api,
                                         private val MealApi:Meal_by_Id_api,
-                                        private val listByCategory: list_by_category) {
+                                        private val listByCategory: list_by_category,
+                                        private val listByContinents: List_by_continents) {
 
 
 
@@ -89,9 +93,9 @@ return Categorydata
 
 
     // getting categorydata
-    private val getcategorydetail = DataOrException<List<mealdetail>,Boolean,Exception>()
+    private val getcategorydetail = DataOrException<categorydetail,Boolean,Exception>()
 
-    suspend fun getcategorydetail(category:String):DataOrException<List<mealdetail>,Boolean,Exception>{
+    suspend fun getcategorydetail(category:String):DataOrException<categorydetail,Boolean,Exception>{
         try {
             getcategorydetail.loading = true
             getcategorydetail.data = listByCategory.categorydata(category)
@@ -103,6 +107,25 @@ return Categorydata
         }
 
       return getcategorydetail
+    }
+
+
+    //getting continetal
+
+    private val getcontinentaldetail = DataOrException<categorydetail,Boolean,Exception>()
+    suspend fun getcontinentaldetail(category:String):DataOrException<categorydetail,Boolean,Exception>{
+        try {
+            getcontinentaldetail.loading = true
+
+            getcontinentaldetail.data = listByContinents.getcontinentaldetail(category)
+            getcontinentaldetail.loading = false
+        }
+        catch (e:Exception){
+            getcontinentaldetail.e  = e
+            Log.d("exception",e.toString())
+        }
+
+        return getcontinentaldetail
     }
 
 

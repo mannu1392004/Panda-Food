@@ -2,6 +2,7 @@ package com.example.foodpanda.di
 
 import com.example.foodpanda.Constants.Constants
 import com.example.foodpanda.network.Category_Api
+import com.example.foodpanda.network.List_by_continents
 import com.example.foodpanda.network.Meal_by_Id_api
 import com.example.foodpanda.network.list_api
 import com.example.foodpanda.network.list_by_category
@@ -60,6 +61,16 @@ object appmodule {
             .create(list_by_category::class.java)
     }
 
+    @Singleton
+    @Provides
+    fun getcontinentaldetail():List_by_continents{
+        return Retrofit.Builder()
+            .baseUrl(Constants.continental)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(List_by_continents::class.java)
+
+    }
 
 
 

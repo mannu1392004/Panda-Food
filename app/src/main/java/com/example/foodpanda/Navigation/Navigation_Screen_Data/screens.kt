@@ -5,6 +5,7 @@ enum class screens {
     Dine,
     Cart,
     Detailscreen,
-    Mainscreen
+    Mainscreen,
+    Categorydetailscreen
 }
 

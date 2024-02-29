@@ -27,7 +27,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.foodpanda.R
-import com.example.foodpanda.Screens.Detail_Screen.DetailScreen
 import com.example.foodpanda.Screens.Dine_screen.DineScreen
 import com.example.foodpanda.Navigation.Navigation_Screen_Data.screens
 import com.example.foodpanda.Viewmoels.Categoryviewmodel
@@ -114,7 +113,7 @@ NavigationBar(modifier = Modifier
         NavHost(navController =nav , startDestination = screens.Cart.name, modifier = Modifier.padding(paddingValues) ){
 
             composable(screens.Categories.name){
-                Categories(viemodel = categoryviewmodel)
+                Categories(viemodel = categoryviewmodel,detail)
                 selection.value=0
             }
 composable(screens.Dine.name){

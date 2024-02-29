@@ -8,8 +8,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.foodpanda.Screens.Detail_Screen.DetailScreen
+import com.example.foodpanda.Screens.categorydetail_screen.categorydetail
 import com.example.foodpanda.Screens.mainscreen.nav
+import com.example.foodpanda.Viewmoels.Categorydetailscreenviewmodel
 import com.example.foodpanda.Viewmoels.Categoryviewmodel
+import com.example.foodpanda.Viewmoels.Continentaldetailviewmodel
 import com.example.foodpanda.Viewmoels.Detailscreenviewmodel
 import com.example.foodpanda.Viewmoels.Dinescreenviewmodel
 
@@ -20,8 +23,11 @@ fun mainnav(){
     val detailscreenviewmodel = viewModel<Detailscreenviewmodel>()
     val categoryviewmodel = viewModel<Categoryviewmodel>()
     val dinescreenviewmodel  = viewModel<Dinescreenviewmodel>()
+    val Categorydetailscreenviewmodel = viewModel<Categorydetailscreenviewmodel>()
+    val Continentaldetailviewmodel = viewModel<Continentaldetailviewmodel>()
 
     NavHost(navController = detail, startDestination = screens.Mainscreen.name ){
+
         composable(route= screens.Mainscreen.name){
             nav(detail,nav,categoryviewmodel,dinescreenviewmodel,detailscreenviewmodel)
         }
@@ -35,6 +41,25 @@ fun mainnav(){
                 DetailScreen(detailscreenviewmodel = detailscreenviewmodel, nav,it,detail)
             }
         }
+
+        val continentalroute = screens.Categorydetailscreen.name
+
+        composable(route = "$continentalroute/{name}/{type}" , arguments = listOf(
+            navArgument("name"){type = NavType.StringType }, navArgument("type"){type = NavType.StringType}
+        )){
+                backStackEntry ->
+            val name = backStackEntry.arguments?.getString("name")
+            val type = backStackEntry.arguments?.getString("type")
+        if (name!=null&&type!=name) {
+
+            categorydetail(
+                viewmodel = Categorydetailscreenviewmodel,
+                Continentaldetailviewmodel,
+                detail,type,name
+            )
+        }}
+
+
     }
 
 }

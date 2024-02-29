@@ -3,6 +3,7 @@ package com.example.foodpanda.Screens.category_Screen
 import ImageList
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 
@@ -35,7 +36,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
+import com.example.foodpanda.Navigation.Navigation_Screen_Data.screens
 import com.example.foodpanda.R
 import com.example.foodpanda.Viewmoels.Categoryviewmodel
 import com.example.foodpanda.data.Countrydata
@@ -49,7 +52,7 @@ import com.example.foodpanda.model.categories.Category
 @SuppressLint("ProduceStateDoesNotAssignValue")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Categories(viemodel: Categoryviewmodel,) {
+fun Categories(viemodel: Categoryviewmodel, detail: NavHostController,) {
 
 
     val imagedisplay = listOf(
@@ -141,7 +144,7 @@ Surface(modifier = Modifier
                         LazyHorizontalGrid(rows = GridCells.Fixed(2),) {
 
                             items(x) {
-                                arrangementofcategories(item = it)
+                                arrangementofcategories(item = it,detail)
                             }
 
                         }
@@ -277,7 +280,7 @@ Image(painter = painterResource(id = R.drawable.crown), contentDescription = "",
 
                     LazyHorizontalGrid(rows = GridCells.Fixed(2),) {
                         items(x) {
-                            countryaa(it)
+                            countryaa(it,detail)
 
 
                         }
@@ -297,10 +300,13 @@ Image(painter = painterResource(id = R.drawable.crown), contentDescription = "",
     }
 
 @Composable
-fun countryaa(x: Countrydata ){
+fun countryaa(x: Countrydata, detail: NavHostController){
     Surface(modifier = Modifier
         .size(150.dp)
         .padding(20.dp)
+        .clickable {
+            detail.navigate(route ="${screens.Categorydetailscreen.name}/continent/${x.Countryname}")
+        }
 
     ) {
         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
@@ -326,26 +332,28 @@ Surface(modifier = Modifier,
 
 
 @Composable
-fun arrangementofcategories(item: Category) {
+fun arrangementofcategories(item: Category, detail: NavHostController) {
 Surface(modifier = Modifier
     .size(150.dp)
     .padding(20.dp)
+    .clickable { detail.navigate(route = "${screens.Categorydetailscreen.name}/normal/${item.strCategory}") }
  ) {
-    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
 
         Image(
             painter = rememberImagePainter(data = item.strCategoryThumb), contentDescription = "",
             contentScale = ContentScale.Fit
         )
-    Text(text = item.strCategory,
-        fontWeight = FontWeight.Light,
-    )
+        Text(
+            text = item.strCategory,
+            fontWeight = FontWeight.Light,
+        )
     }
-}
-
-}
+}}
 
 
 
