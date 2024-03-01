@@ -3,41 +3,47 @@ package com.example.foodpanda.Viewmoels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodpanda.RoomDatabase.entity.Cart_entity
-import com.example.foodpanda.data.DataOrException
-
-import com.example.foodpanda.model.categorydetail.categorydetail
 import com.example.foodpanda.repository.AppRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
-class Continentaldetailviewmodel @Inject constructor(private val repository: AppRepository):ViewModel() {
+class cartviewmodel @Inject constructor(private val repository: AppRepository)  :ViewModel(){
+    val isempty: MutableStateFlow<Int> = MutableStateFlow(0)
+    init {
+        viewModelScope.launch {
+            repository.getrowcount().collect {
+                isempty.value = it
+            }
+        }
 
-    suspend fun getcontinentaldetail(name:String):DataOrException<categorydetail,Boolean,Exception>{
-        return repository.getcontinentaldetail(name)
     }
+
+// get cart
 
     val cart: MutableStateFlow<List<Cart_entity>> = MutableStateFlow(emptyList())
     init {
         viewModelScope.launch {
-            repository.getcart().collect() {
+            repository.getcart().collect {
                 cart.value = it
             }
         }
 
     }
 
+    // delete from cart
 
-    fun isMealInCart(mealId: String): Flow<Boolean> {
-        return repository.isMealInCart(mealId)
+    fun delete(cartEntity: Cart_entity) = viewModelScope.launch {
+        repository.delete(cartEntity)
     }
-    // add to cart
-    fun addtocart(cartEntity: Cart_entity)  = viewModelScope.launch {
+
+    fun add(cartEntity: Cart_entity) = viewModelScope.launch {
         repository.inserttocart(cartEntity)
     }
+
+
 
 }

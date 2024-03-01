@@ -30,9 +30,4 @@ open class Categoryviewmodel @Inject constructor(private val repository: AppRepo
 
 
     }
-
-
-
-
-
 }

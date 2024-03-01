@@ -1,6 +1,7 @@
 package com.example.foodpanda.Screens.Detail_Screen
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -41,6 +43,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
+import com.example.foodpanda.Navigation.Navigation_Screen_Data.screens
+import com.example.foodpanda.RoomDatabase.entity.Cart_entity
 import com.example.foodpanda.Viewmoels.Detailscreenviewmodel
 import com.example.foodpanda.data.DataOrException
 
@@ -55,9 +59,7 @@ fun DetailScreen(
 val radiobutton = remember {
     mutableStateOf(0)
 }
-val addvalue = remember {
-    mutableStateOf(0)
-}
+
 
 
     val detaildata = produceState(
@@ -72,7 +74,21 @@ val addvalue = remember {
 
 
 
+
+
+
     x?.get(0)?.let {
+        val check = detailscreenviewmodel.isMealInCart(it.idMeal).collectAsState(initial = false)
+      val cartdata = detailscreenviewmodel.getonedata(it.idMeal).collectAsState(
+          initial = null
+      )
+        val x = cartdata.value?.add
+        Log.d("wkjcccccccccccccccccccccccccccccm" ,x.toString())
+
+        val addvalue = remember {
+            mutableStateOf(if (x!=null) x
+            else 0)
+        }
 
         Surface(modifier = Modifier.fillMaxSize()) {
 
@@ -94,7 +110,7 @@ val addvalue = remember {
                         modifier = Modifier
                             .rotate(90f)
                             .clickable {
-detail.popBackStack()
+                                detail.popBackStack()
                             }
                     )
 
@@ -119,7 +135,7 @@ detail.popBackStack()
 
                     Column(
                         modifier = Modifier
-                            .padding(start =20.dp, end = 20.dp)
+                            .padding(start = 20.dp, end = 20.dp)
                             .verticalScroll(rememberScrollState())
                     ) {
 
@@ -252,6 +268,8 @@ RadioButton(selected = radiobutton.value==1, onClick = { radiobutton.value = 1 }
 
                         }
                         Spacer(modifier = Modifier.height(10.dp))
+
+
                         Surface(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -273,16 +291,32 @@ RadioButton(selected = radiobutton.value==1, onClick = { radiobutton.value = 1 }
                                         Icon(
                                             imageVector = Icons.Filled.KeyboardArrowUp,
                                             contentDescription = "",
-                                            modifier = Modifier.rotate(-90f)
+                                            modifier = Modifier
+                                                .rotate(-90f)
                                                 .clickable {
-                                                    if (addvalue.value>0)
-                                                addvalue.value--
+                                                    if (addvalue.value!! > 0)
+                                                        addvalue.value = addvalue.value!! - 1
+
+                                                    addvalue.value?.let { it1 ->
+                                                        Cart_entity(
+                                                            add = it1,
+                                                            img = it.strMealThumb,
+                                                            name = it.strMeal,
+                                                            id = it.idMeal
+                                                        )
+                                                    }?.let { it2 ->
+                                                        detailscreenviewmodel.addtocart(
+                                                            it2
+                                                        )
+                                                    }
+
                                                 },
                                             tint = Color.White,
                                         )
                                         Text(
-                                            text = if (addvalue.value==0)"Add"
-                                            else addvalue.value.toString(),
+                                            text = if (!check.value)"Add"
+                                            else cartdata.value?.add.toString(),
+
                                             modifier = Modifier.padding(10.dp),
                                             color = Color.White
                                         )
@@ -290,18 +324,55 @@ RadioButton(selected = radiobutton.value==1, onClick = { radiobutton.value = 1 }
                                         Icon(
                                             imageVector = Icons.Filled.KeyboardArrowUp,
                                             contentDescription = "",
-                                            modifier = Modifier.rotate(90f).clickable{
-                                                         addvalue.value++
-                                            },
+                                            modifier = Modifier
+                                                .rotate(90f)
+                                                .clickable {
+                                                    addvalue.value = addvalue.value!! + 1
+                                                    addvalue.value?.let { it1 ->
+                                                        Cart_entity(
+                                                            add = it1,
+                                                            img = it.strMealThumb,
+                                                            name = it.strMeal,
+                                                            id = it.idMeal
+                                                        )
+                                                    }?.let { it2 ->
+                                                        detailscreenviewmodel.addtocart(
+                                                            it2
+                                                        )
+                                                    }
+
+                                                },
                                           tint = Color.White
                                         )
                                     }
                                 }
+                                Surface(color = if (!check.value) Color.Red
+                                    else Color.Green
+                                    , shape = RoundedCornerShape(10.dp)
+                                , modifier = Modifier.clickable {
+                                    if (!check.value){
+                                        detailscreenviewmodel.addtocart(
+                                            Cart_entity(add = 1,
+                                                img = it.strMealThumb
+                                            , name = it.strMeal,
+                                                id = it.idMeal)
+                                        )
+                                    }
+                                        else{
+                                            nav.navigate(screens.Cart.name)
+                                        detail.popBackStack()
+
+                                        }
 
 
-                                Surface(color = Color.Red, shape = RoundedCornerShape(10.dp)) {
+
+                                    }
+
+                                ) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(text = "Add to Cart",modifier = Modifier.padding(10.dp), color = Color.White
+                                        Text(text = if (!check.value) "Add to Cart"
+                                            else "Go to Cart",
+                                            modifier = Modifier.padding(10.dp), color = Color.White
                                        , fontWeight = FontWeight.Bold )
                                     }
 

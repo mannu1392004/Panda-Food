@@ -33,12 +33,13 @@ import androidx.compose.ui.unit.em
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.example.foodpanda.Navigation.Navigation_Screen_Data.screens
+import com.example.foodpanda.RoomDatabase.entity.Cart_entity
 import com.example.foodpanda.Viewmoels.Dinescreenviewmodel
 import com.example.foodpanda.components.textchange
 import com.example.foodpanda.model.by_first_letter.Meal
 
 @Composable
-fun DineScreen(viewmodel: Dinescreenviewmodel, detail: NavHostController) {
+fun DineScreen(viewmodel: Dinescreenviewmodel, detail: NavHostController, nav: NavHostController) {
 
 
 
@@ -53,7 +54,7 @@ fun DineScreen(viewmodel: Dinescreenviewmodel, detail: NavHostController) {
 
 
 
-            LazyColumnContent( x.value.flatten(),detail)
+            LazyColumnContent( x.value.flatten(),detail,viewmodel,nav)
         }
     }
 }
@@ -90,12 +91,17 @@ fun SearchBar(textList: List<String>) {
 }
 
 @Composable
-fun LazyColumnContent( data: List<Meal>?, detail: NavHostController, ) {
+fun LazyColumnContent(
+    data: List<Meal>?,
+    detail: NavHostController,
+    viewmodel: Dinescreenviewmodel,
+    nav: NavHostController,
+   ) {
     if (data != null) {
         LazyColumn(state = rememberLazyListState(),
             modifier = Modifier.padding(top = 5.dp)) {
             items(data) { meal ->
-                ReproducingList(meal = meal,detail)
+                ReproducingList(meal = meal,detail,viewmodel,nav)
             }
         }
     }
@@ -103,14 +109,24 @@ fun LazyColumnContent( data: List<Meal>?, detail: NavHostController, ) {
 
 
 @Composable
-fun ReproducingList(meal: Meal, detail: NavHostController) {
+fun ReproducingList(
+    meal: Meal,
+    detail: NavHostController,
+    viewmodel: Dinescreenviewmodel,
+    nav: NavHostController,
+
+    ) {
+
+    val mealId = meal.idMeal
+    val isMealInCart  =  viewmodel.isMealInCart(mealId).collectAsState(initial = false)
     val id = meal.idMeal
     Surface(
-        modifier = Modifier.padding(10.dp)
+        modifier = Modifier
+            .padding(10.dp)
 
             .clickable {
-                Log.d("idddddddddddddddddddd",id)
-                detail.navigate(screens.Detailscreen.name+"/$id" ) },
+                detail.navigate(screens.Detailscreen.name + "/$id")
+            },
         shadowElevation = 20.dp,
         shape = RoundedCornerShape(20.dp)
 
@@ -151,11 +167,32 @@ Row(modifier = Modifier,
 
         Spacer(modifier =Modifier.weight(0.3f))
 
-        Surface(color = Color.Red, modifier = Modifier.weight(0.3f)) {
+        Surface(color =  if (isMealInCart.value) Color.Green  else Color.Red, modifier = Modifier
+            .weight(0.3f)
+            .clickable {
+
+               if (!isMealInCart.value){
+                viewmodel.addtocart(
+                    Cart_entity(
+                        add = 1,
+                        img = meal.strMealThumb,
+                        id = meal.idMeal,
+                        name = meal.strMeal
+                    )
+                )
+            }
+                else
+                    nav.navigate(screens.Cart.name)
+Log.d("jen","dnwd")
+
+            } ) {
+
 
 
             Text(
-                text = "Add to cart", color = Color.White, modifier = Modifier.padding(5.dp)
+                text = if (isMealInCart.value) "Go to Cart" else "Add to Cart"
+
+               , color = Color.White, modifier = Modifier.padding(5.dp)
             )
 
         }
@@ -187,8 +224,6 @@ Spacer(modifier = Modifier.weight(0.1f))
             fontWeight = FontWeight.Light
         )
     }
-    
-    
 }
             }
         }

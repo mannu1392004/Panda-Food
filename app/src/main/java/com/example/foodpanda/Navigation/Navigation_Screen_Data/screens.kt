@@ -6,6 +6,7 @@ enum class screens {
     Cart,
     Detailscreen,
     Mainscreen,
-    Categorydetailscreen
+    Categorydetailscreen,
+    orderplaced
 }
 

@@ -1,6 +1,10 @@
 package com.example.foodpanda.di
 
+import android.content.Context
+import androidx.room.Room
 import com.example.foodpanda.Constants.Constants
+import com.example.foodpanda.RoomDatabase.Dao.Cart_dao
+import com.example.foodpanda.RoomDatabase.Database.Database
 import com.example.foodpanda.network.Category_Api
 import com.example.foodpanda.network.List_by_continents
 import com.example.foodpanda.network.Meal_by_Id_api
@@ -9,6 +13,7 @@ import com.example.foodpanda.network.list_by_category
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -73,5 +78,16 @@ object appmodule {
     }
 
 
+    @Singleton
+    @Provides
+    fun provideappdatabase(@ApplicationContext context: Context):Database =
+        Room.databaseBuilder(context,Database::class.java
+            ,"cart").fallbackToDestructiveMigration()
+            .build()
+
+
+    @Singleton
+    @Provides
+    fun providesdao(database: Database):Cart_dao = database.dao
 
 }

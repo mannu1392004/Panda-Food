@@ -1,6 +1,9 @@
 package com.example.foodpanda.repository
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import com.example.foodpanda.RoomDatabase.Dao.Cart_dao
+import com.example.foodpanda.RoomDatabase.entity.Cart_entity
 import com.example.foodpanda.data.DataOrException
 
 import com.example.foodpanda.model.Detailmeal.mealdetail
@@ -12,6 +15,7 @@ import com.example.foodpanda.network.List_by_continents
 import com.example.foodpanda.network.Meal_by_Id_api
 import com.example.foodpanda.network.list_api
 import com.example.foodpanda.network.list_by_category
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import kotlin.math.log
 
@@ -19,7 +23,8 @@ class AppRepository @Inject constructor(private val categoryApi: Category_Api,
                                         private val listApi: list_api,
                                         private val MealApi:Meal_by_Id_api,
                                         private val listByCategory: list_by_category,
-                                        private val listByContinents: List_by_continents) {
+                                        private val listByContinents: List_by_continents,
+                                        private val cartDao: Cart_dao) {
 
 
 
@@ -126,9 +131,36 @@ return Categorydata
         }
 
         return getcontinentaldetail
+
+
+
     }
 
+    // room actions
+
+    //insert
+    suspend fun inserttocart(cartEntity: Cart_entity) = cartDao.adddata(cartEntity)
 
 
+    //delete
+    suspend fun delete(cartEntity: Cart_entity) = cartDao.delete(cartEntity)
 
+
+    // getdetails
+
+    fun getcart(): Flow<List<Cart_entity>> =cartDao.getallcartitem()
+
+
+    // get rowcount
+
+    fun getrowcount():Flow<Int>  =cartDao.getrowno()
+
+
+    fun isMealInCart(mealId: String): Flow<Boolean> {
+        return cartDao.isMealInCart(mealId)
+    }
+
+    fun onemealdata(id:String):Flow<Cart_entity>{
+        return cartDao.onedata(id)
+    }
 }

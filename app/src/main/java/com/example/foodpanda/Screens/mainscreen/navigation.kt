@@ -29,8 +29,10 @@ import androidx.navigation.compose.composable
 import com.example.foodpanda.R
 import com.example.foodpanda.Screens.Dine_screen.DineScreen
 import com.example.foodpanda.Navigation.Navigation_Screen_Data.screens
+import com.example.foodpanda.Screens.Cart_Screen.CartScreen
 import com.example.foodpanda.Viewmoels.Categoryviewmodel
 import com.example.foodpanda.Screens.category_Screen.Categories
+import com.example.foodpanda.Viewmoels.cartviewmodel
 import com.example.foodpanda.Viewmoels.Detailscreenviewmodel
 import com.example.foodpanda.Viewmoels.Dinescreenviewmodel
 
@@ -40,7 +42,8 @@ fun nav(
     nav: NavHostController,
     categoryviewmodel: Categoryviewmodel,
     dinescreenviewmodel: Dinescreenviewmodel,
-    detailscreenviewmodel: Detailscreenviewmodel
+    detailscreenviewmodel: Detailscreenviewmodel,
+    Cartviewmodel: cartviewmodel
 ) {
 
 
@@ -117,11 +120,11 @@ NavigationBar(modifier = Modifier
                 selection.value=0
             }
 composable(screens.Dine.name){
-DineScreen(viewmodel = dinescreenviewmodel, detail)
+DineScreen(viewmodel = dinescreenviewmodel, detail,nav)
     selection.value = 1
 }
 composable(screens.Cart.name){
-
+CartScreen(Cartviewmodel,detail)
     selection.value  = 2
 }
         }
