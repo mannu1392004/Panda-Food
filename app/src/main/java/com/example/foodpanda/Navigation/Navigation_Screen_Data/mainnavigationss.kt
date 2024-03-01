@@ -75,7 +75,8 @@ fun mainnav(){
 
 composable(route = screens.orderplaced.name){
     orderplaced(detail,nav)
-}
+
+ }
 
 
     }
